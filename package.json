@@ -1,0 +1,13 @@
+{
+  "name": "tokenhunter-historical-analyzer",
+  "version": "1.0.0",
+  "description": "Historical Analyzer for TokenHunter",
+  "main": "historical_analyzer.js",
+  "scripts": {
+    "analyze": "node historical_analyzer.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "dotenv": "^16.0.3"
+  }
+}
