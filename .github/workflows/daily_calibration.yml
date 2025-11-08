@@ -28,15 +28,15 @@ jobs:
         # و نتیجه را در یک متغیر محیطی قرار داد
         # برای سادگی، مستقیماً در اسکریپت اصلی انجام می‌شود
         echo "MARKET_REGIME=NEUTRAL" >> $GITHUB_ENV
-      # در عمل، می‌توان از یک اسکریپت جدا مانند `node github/scripts/detect_regime.js` استفاده کرد
+      # در عمل، می‌توان از یک اسکریپت جدا مانند `node scripts/detect_regime.js` استفاده کرد
 
     - name: Run scanner script
-      run: node github/scripts/scanner.js
+      run: node scripts/scanner.js # ⚠️ تغییر مسیر اینجا
       env:
         CG_API_KEY: ${{ secrets.CG_API_KEY }}
 
     - name: Run analyzer script
-      run: node github/scripts/analyzer.js
+      run: node scripts/analyzer.js # ⚠️ تغییر مسیر اینجا
       env:
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
 
