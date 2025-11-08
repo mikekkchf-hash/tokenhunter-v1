@@ -1,4 +1,4 @@
-// github/scripts/tests/providers.test.js
+// .github/scripts/tests/providers.test.js
 // استفاده از jest
 const nock = require('nock');
 
