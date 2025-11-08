@@ -1,4 +1,4 @@
-// github/scripts/update_state.js
+// .github/scripts/update_state.js
 // PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
 
 const fs = require('fs');
