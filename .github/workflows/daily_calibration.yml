@@ -31,12 +31,12 @@ jobs:
       # در عمل، می‌توان از یک اسکریپت جدا مانند `node scripts/detect_regime.js` استفاده کرد
 
     - name: Run scanner script
-      run: node scripts/scanner.js # ⚠️ تغییر مسیر اینجا
+      run: node .github/scripts/scanner.js
       env:
         CG_API_KEY: ${{ secrets.CG_API_KEY }}
 
     - name: Run analyzer script
-      run: node scripts/analyzer.js # ⚠️ تغییر مسیر اینجا
+      run: node scripts/analyzer.js # ⚠️ تغییر مسیر اینجا - به جای github/scripts/analyzer.js
       env:
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
 
