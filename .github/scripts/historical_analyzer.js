@@ -1,4 +1,4 @@
-// github/scripts/historical_analyzer.js
+// .github/scripts/historical_analyzer.js
 
 require('dotenv').config();
 const fetch = require('node-fetch');
