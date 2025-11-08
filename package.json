@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "test:providers": "jest github/scripts/tests/providers.test.js",
-    "test:fallback": "jest github/scripts/tests/fallback.test.js",
+    "test:providers": "jest .github/scripts/tests/providers.test.js",
+    "test:fallback": "jest .github/scripts/tests/fallback.test.js",
     "start:worker": "wrangler dev",
     "deploy:worker": "wrangler deploy",
-    "calibrate": "node github/scripts/analyzer.js", // فرض بر این است که نام فایل شما analyzer.js است
-    "scan": "node github/scripts/scanner.js",
-    "analyze": "node github/scripts/analyzer.js" // اضافه شده برای رفع خطای npm run analyze
+    "calibrate": "node .github/scripts/analyzer.js", // فرض بر این است که نام فایل شما analyzer.js است
+    "scan": "node .github/scripts/scanner.js",
+    "analyze": "node .github/scripts/analyzer.js" // اضافه شده برای رفع خطای npm run analyze
   },
   "dependencies": {
     "node-fetch": "^2.6.7",
