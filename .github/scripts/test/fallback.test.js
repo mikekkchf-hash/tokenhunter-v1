@@ -1,4 +1,4 @@
-// github/scripts/tests/fallback.test.js
+// .github/scripts/tests/fallback.test.js
 // استفاده از jest برای تست توابع Node.js
 
 // توجه: تست مستقیم تابع callWithFallback از worker/utils/fallback.js در Node.js بدون محیط Worker چالش‌برانگیز است.
