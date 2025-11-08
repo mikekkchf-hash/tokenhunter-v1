@@ -31,12 +31,12 @@ jobs:
       # در عمل، می‌توان از یک اسکریپت جدا مانند `node scripts/detect_regime.js` استفاده کرد
 
     - name: Run scanner script
-      run: node .github/scripts/scanner.js
+      run: node scripts/scanner.js # ⚠️ اصلاح مسیر: از scripts/ در ریشه
       env:
         CG_API_KEY: ${{ secrets.CG_API_KEY }}
 
     - name: Run analyzer script
-      run: node .github/scripts/analyzer.js # ⚠️ تغییر مسیر اینجا - به جای github/scripts/analyzer.js
+      run: node scripts/analyzer.js # ⚠️ اصلاح مسیر: از scripts/ در ریشه
       env:
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
 
@@ -69,7 +69,26 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git add data/*.csv data/*.json
+
+        # فقط فایل‌هایی را که وجود دارند اضافه کن (رفع خطای pathspec)
+        if [ -f data/smart_wallets.csv ]; then
+          git add data/smart_wallets.csv
+          echo "Added data/smart_wallets.csv"
+        fi
+        if [ -f data/profitable_tokens.csv ]; then
+          git add data/profitable_tokens.csv
+          echo "Added data/profitable_tokens.csv"
+        fi
+        if [ -f data/last_seen.json ]; then
+          git add data/last_seen.json
+          echo "Added data/last_seen.json"
+        fi
+        if [ -f data/alerts_history.json ]; then
+          git add data/alerts_history.json
+          echo "Added data/alerts_history.json"
+        fi
+
+        # چک کن اگر تغییری برای commit وجود دارد
         if ! git diff --staged --quiet; then
           git commit -m "Update state files - $(date -u)"
           git push
