@@ -64,36 +64,5 @@ jobs:
         fi
       shell: bash
 
-    # --- اضافه شده برای پشتیبانی از Resilience ---
-    - name: Commit State Files to GitHub
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-        # فقط فایل‌هایی را که وجود دارند اضافه کن (رفع خطای pathspec)
-        if [ -f data/smart_wallets.csv ]; then
-          git add data/smart_wallets.csv
-          echo "Added data/smart_wallets.csv"
-        fi
-        if [ -f data/profitable_tokens.csv ]; then
-          git add data/profitable_tokens.csv
-          echo "Added data/profitable_tokens.csv"
-        fi
-        if [ -f data/last_seen.json ]; then
-          git add data/last_seen.json
-          echo "Added data/last_seen.json"
-        fi
-        if [ -f data/alerts_history.json ]; then
-          git add data/alerts_history.json
-          echo "Added data/alerts_history.json"
-        fi
-
-        # چک کن اگر تغییری برای commit وجود دارد
-        if ! git diff --staged --quiet; then
-          git commit -m "Update state files - $(date -u)"
-          git push
-          echo "✅ State files committed and pushed."
-        else
-          echo "No changes to commit."
-        fi
-      shell: bash
+    # --- گام Commit و Push حذف شد تا خطای 403 رفع شود ---
+    # اگر نیاز به ذخیره فایل‌های خروجی در مخزن دارید، روش‌های امن‌تری وجود دارد، مانند استفاده از GitHub Artifacts یا ایجاد یک Pull Request.
