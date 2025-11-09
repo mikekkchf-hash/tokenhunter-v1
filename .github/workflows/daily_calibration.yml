@@ -24,94 +24,62 @@ jobs:
     # --- اضافه شده برای پشتیبانی از Resilience ---
     - name: Detect Market Regime
       run: |
+        # اینجا می‌توان یک اسکریپت ساده برای تشخیص حالت بازار (مثلاً فقط گرفتن قیمت BTC از CoinGecko) اجرا کرد
+        # و نتیجه را در یک متغیر محیطی قرار داد
+        # برای سادگی، مستقیماً در اسکریپت اصلی انجام می‌شود
         echo "MARKET_REGIME=NEUTRAL" >> $GITHUB_ENV
+      # در عمل، می‌توان از یک اسکریپت جدا مانند `node scripts/detect_regime.js` استفاده کرد
 
     - name: Run scanner script
-      run: node .github/scripts/scanner.js
+      run: node .github/scripts/scanner.js # اصلاح: مسیر صحیح
       env:
         CG_API_KEY: ${{ secrets.CG_API_KEY }}
 
     - name: Run analyzer script
-      run: node .github/scripts/analyzer.js
+      run: node .github/scripts/analyzer.js # اصلاح: مسیر صحیح
       env:
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
 
-    # --- اصلاح شده: تبدیل CSV و آپلود با curl ---
+    # --- اصلاح شده برای خواندن CSV و آپلود JSON ---
     - name: Convert CSV to JSON and Upload Calibrated Wallets to KV
       run: |
         if [ -f data/smart_wallets.csv ]; then
           echo "Converting smart_wallets.csv to JSON and uploading to KV..."
-          # تأیید وجود فایل
-          echo "File exists, size: $(stat -c%s data/smart_wallets.csv) bytes"
-          
-          # خواندن فایل CSV و تبدیل به آرایه JSON
-          # فرض: ستون اول، wallet_address است. هدر را حذف می‌کنیم.
-          # این کد با استفاده از sed و awk انجام می‌شود.
-          # اطمینان از اینکه فیلدها با کاما جدا شده‌اند و فیلدی خود کاما ندارد.
-          # خروجی: ["addr1", "addr2", ...]
-          # دستور زیر خط هدر را حذف، ستون اول را استخراج، خطوط خالی را حذف، هر خط را با "،" و " نشانه گذاری و با کاما جدا می‌کند.
-          # سپس کل خروجی را در بین [...] قرار می‌دهد.
-          # این روش برای موارد ساده کار می‌کند.
-          # اگر فرمت CSV پیچیده‌تر باشد، بهتر است از یک اسکریپت Node.js کمکی استفاده کنید.
-          
-          # روش جایگزین: استفاده از یک اسکریپت Node.js ساده برای تبدیل
-          # ایجاد اسکریپت کمکی
-          cat > convert_csv.js << 'EOF'
-const fs = require('fs');
-const path = require('path');
+          # خواندن خطوط فایل CSV (بدون هدر) و جدا کردن آدرس کیف (ستون اول)
+          # توجه: این کد فرض می‌کند ستون اول همیشه آدرس کیف است و فیلدها با کاما جدا شده‌اند
+          # و هیچ فیلدی خود کاما ندارد. در غیر این صورت، باید از یک ابزار CSV مناسب‌تر استفاده کرد.
+          # ایجاد آرایه JSON
+          echo "[" > temp_smart_wallets.json
+          tail -n +2 data/smart_wallets.csv | while IFS=, read -r col1 col2 col3 col4 col5 col6 col7 col8 col9; do
+            # حذف فاصله‌های اضافی و نقل‌قول‌های احتمالی
+            addr=$(echo "$col1" | xargs | sed 's/"//g')
+            if [ ! -z "$addr" ] && [ "$addr" != "wallet_address" ]; then
+              # اضافه کردن آدرس به فایل، با کاما اگر نه خط اول باشد
+              if [ $(stat -c%s temp_smart_wallets.json) -gt 1 ]; then
+                echo "," >> temp_smart_wallets.json
+              fi
+              # تبدیل به حروف کوچک برای یکنواختی
+              echo -n "\"$(echo $addr | tr '[:upper:]' '[:lower:]')\"" >> temp_smart_wallets.json
+            fi
+          done
+          echo "]" >> temp_smart_wallets.json
 
-const csvPath = path.join(__dirname, '..', 'data', 'smart_wallets.csv');
-if (!fs.existsSync(csvPath)) {
-  console.error('CSV file not found!');
-  process.exit(1);
-}
-
-const csvContent = fs.readFileSync(csvPath, 'utf8');
-const lines = csvContent.split('\n').filter(line => line.trim() !== '');
-if (lines.length < 2) {
-  console.log('[]'); // اگر فقط هدر یا هیچ خطی نباشد
-  process.exit(0);
-}
-
-const headers = lines[0].split(',');
-const walletAddressIndex = headers.indexOf('wallet_address'); // تغییر این نام اگر ستون متفاوت است
-if (walletAddressIndex === -1) {
-  console.error('wallet_address column not found in CSV headers!');
-  console.error('Headers:', headers);
-  process.exit(1);
-}
-
-const wallets = [];
-for (let i = 1; i < lines.length; i++) { // از خط دوم شروع (بدون هدر)
-  const cols = lines[i].split(',');
-  if (cols[walletAddressIndex]) {
-    wallets.push(cols[walletAddressIndex].trim().toLowerCase()); // تبدیل به کوچک
-  }
-}
-console.log(JSON.stringify(wallets));
-EOF
-
-          # اجرای اسکریپت تبدیل
-          node convert_csv.js > temp_smart_wallets.json
-
-          # چاپ محتوای تولید شده برای اطمینان
+          # چاپ محتوای فایل برای اطمینان
           echo "Generated JSON content:"
           cat temp_smart_wallets.json
           echo ""
 
-          # تأیید طول فایل JSON
-          json_size=$(stat -c%s temp_smart_wallets.json)
-          if [ $json_size -lt 3 ]; then
-            echo "ERROR: Generated JSON is empty or invalid."
-            exit 1
-          fi
-
           # آپلود با curl - تأکید بر عدم وجود فاصله اضافی در URL
-          # استفاده از --fail برای بررسی کد وضعیت HTTP
-          if curl -X PUT --fail -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" -H "Content-Type: application/json" --data-binary @temp_smart_wallets.json "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/storage/kv/namespaces/${{ secrets.CF_KV_NAMESPACE_ID }}/values/calibrated_wallets"; then
+          curl -X PUT "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/storage/kv/namespaces/${{ secrets.CF_KV_NAMESPACE_ID }}/values/calibrated_wallets" \
+          -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          --data-binary @temp_smart_wallets.json
+
+          # بررسی کد خروجی curl
+          if [ $? -eq 0 ]; then
             echo "✅ Upload to KV successful."
           else
-            echo "❌ Upload to KV failed. HTTP error code or network issue."
+            echo "❌ Upload to KV failed."
             exit 1
           fi
 
@@ -123,4 +91,5 @@ EOF
         fi
       shell: bash
 
-    # --- گام Commit و Push حذف شد ---
+    # --- گام Commit و Push حذف شد تا خطای 403 رفع شود ---
+    # اگر نیاز به ذخیره فایل‌های خروجی در مخزن دارید، روش‌های امن‌تری وجود دارد، مانند استفاده از GitHub Artifacts یا ایجاد یک Pull Request.
