@@ -6,7 +6,7 @@ workers_dev = true
 
 # اتصال به KV Namespaces
 [[kv_namespaces]]
-binding = "MY_KV"
+binding = "WALLETS_KV"
 id = "d5dc65bcaa4345e78d6df6bbf2a95fb6" # <- جایگزین کنید
 preview_id = "d5dc65bcaa4345e78d6df6bbf2a95fb6" # <- جایگزین کنید
 
