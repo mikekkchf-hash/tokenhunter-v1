@@ -117,8 +117,23 @@ async function main() {
 
     console.log('High score wallets:', highScoreWallets);
 
+    // --- اضافه شده برای سازگاری با GitHub Actions ---
+    // 1. آماده‌سازی خروجی JSON برای GitHub Actions
+    const kvOutput = {
+        wallets: highScoreWallets, // لیست ولت‌های کالیبره
+        updated_at: new Date().toISOString() // زمان بروزرسانی
+    };
+    const jsonString = JSON.stringify(kvOutput, null, 2); // JSON قابل خواندن
+
+    // 2. ذخیره در فایل smart_wallets.json
+    const fs = require('fs'); // اطمینان از import fs
+    fs.writeFileSync('smart_wallets.json', jsonString);
+    console.log(`✅ smart_wallets.json created with ${highScoreWallets.length} calibrated wallets.`);
+    // --- پایان بخش اضافه شده ---
+
     if (highScoreWallets.length > 0) {
         // ذخیره در KV فقط اگر لیست خالی نبود
+        // (این بخش اختیاری است، می‌توانید فقط فایل را بسازید و از GitHub Actions آپلود کنید)
         await updateKVWithSmartWallets(highScoreWallets);
     } else {
         console.log("No wallets met the score threshold. KV will not be updated.");
