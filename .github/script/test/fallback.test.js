@@ -1,4 +1,4 @@
-// github/scripts/tests/fallback.test.js
+// .github/scripts/tests/fallback.test.js
 // SOURCE_FOR: TESTS
 // تست واحد برای مکانیزم فعالیت اضطراری
 
