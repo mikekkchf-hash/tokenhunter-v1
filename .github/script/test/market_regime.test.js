@@ -1,4 +1,4 @@
-// github/scripts/tests/market_regime.test.js
+// .github/scripts/tests/market_regime.test.js
 // SOURCE_FOR: TESTS
 // تست واحد برای تشخیص حالت بازار
 
@@ -78,4 +78,5 @@ describe('Market Regime Detection', () => {
         expect(result.multipliers.risk).toBe(1.0);
         expect(result.multipliers.opportunity).toBe(1.0);
     });
+
 });
