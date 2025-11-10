@@ -1,4 +1,4 @@
-// github/scripts/analyzer.v2.js
+// .github/scripts/analyzer.v2.js
 // SOURCE_FOR: ANALYZER
 // SOURCE_FOR: DEPLOY
 
