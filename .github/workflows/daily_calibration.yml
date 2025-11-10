@@ -36,14 +36,14 @@ jobs:
 
     # --- گام اسکنر ---
     - name: Run scanner script
-      run: node github/scripts/scanner.js
+      run: node .github/scripts/scanner.js
       env:
         CG_API_KEY: ${{ secrets.CG_API_KEY }}
         REGIME: ${{ env.REGIME }}
 
     # --- گام آنالیزر ---
     - name: Run analyzer script
-      run: node github/scripts/analyzer.v2.js
+      run: node .github/scripts/analyzer.v2.js
       env:
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
         REGIME: ${{ env.REGIME }}
