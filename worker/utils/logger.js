@@ -2,7 +2,7 @@
 // PATCHED FOR REGIME - DO NOT REMOVE - integrated by Qwen
 // PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
 
-export class getLogger {
+export class Logger {
     constructor(env) {
         this.env = env;
     }
@@ -30,3 +30,4 @@ export class getLogger {
 // اما برای سادگی، می‌توانیم یک تابع export کنیم که نمونه بسازد.
 
 export const getLogger = (env) => new Logger(env);
+
