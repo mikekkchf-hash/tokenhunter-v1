@@ -1,0 +1,12 @@
+{
+  "name": "tokenhunter-calibrator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wallet_calibrator.js",
+  "scripts": {
+    "calibrate": "node wallet_calibrator.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
