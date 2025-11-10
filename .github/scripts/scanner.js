@@ -2,10 +2,11 @@
 // PATCHED FOR REGIME - DO NOT REMOVE - integrated by Qwen
 // PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
 
-require('dotenv').config();
-const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
+// تغییر از require به import
+import 'dotenv/config'; // برای لود کردن .env
+import fetch from 'node-fetch';
+import fs from 'fs';
+import path from 'path';
 
 // تابع اصلی اسکن
 async function runScanner() {
@@ -76,9 +77,20 @@ async function runScanner() {
     return tokens;
 }
 
-if (require.main === module) {
+// برای اجرای مستقیم اسکریپت
+if (typeof require !== 'undefined' && require.main === module) {
+    // این بخش برای زمانی است که با Node.js مستقیماً اجرا شود
+    // اما در ESM، require.main وجود ندارد.
+    // بنابراین برای تست در Node.js، می‌توان از شرط زیر استفاده کرد
+    // یا اینکه فقط از `export` استفاده کرد و در فایل دیگری صدا زده شود
     runScanner().catch(console.error);
 }
 
+// export برای استفاده در جاهای دیگر (مثلاً در GitHub Actions)
+export { runScanner };
 
-module.exports = { runScanner };
+// اگر می‌خواهید کل فایل اجرا شود وقتی import می‌شود (مثل require.main)، می‌توانید این کد را اضافه کنید:
+// (البته توصیه نمی‌شود چون ممکن است بارگذاری نامناسب باشد)
+// if (import.meta.url === new URL(import.meta.url).href) {
+//   runScanner().catch(console.error);
+// }
