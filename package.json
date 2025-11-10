@@ -1,11 +1,15 @@
 {
-  "name": "tokenhunter-calibrator",
+  "name": "tokenhunter",
   "version": "1.0.0",
   "description": "",
-  "main": "wallet_calibrator.js",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "calibrate": "node wallet_calibrator.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "node-fetch": "^2.6.7"
   }
