@@ -1,4 +1,4 @@
-// github/scripts/analyzer.js
+// .github/scripts/analyzer.js
 // PATCHED FOR REGIME - DO NOT REMOVE - integrated by Qwen
 // PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
 
@@ -149,5 +149,6 @@ async function runAnalyzer() {
 if (require.main === module) {
     runAnalyzer().catch(console.error);
 }
+
 
 module.exports = { runAnalyzer };
