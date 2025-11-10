@@ -1,4 +1,4 @@
-// github/scripts/scanner.js
+// .github/scripts/scanner.js
 // PATCHED FOR REGIME - DO NOT REMOVE - integrated by Qwen
 // PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
 
@@ -79,5 +79,6 @@ async function runScanner() {
 if (require.main === module) {
     runScanner().catch(console.error);
 }
+
 
 module.exports = { runScanner };
