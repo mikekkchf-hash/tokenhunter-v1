@@ -1,4 +1,4 @@
-// github/scripts/historical_analyzer.js
+// .github/scripts/historical_analyzer.js
 
 require('dotenv').config();
 const fetch = require('node-fetch');
@@ -203,5 +203,6 @@ async function sendDailyReport(topWallets, sortedWallets) {
         console.error('Error sending daily report to Telegram:', e);
     }
 }
+
 
 main().catch(console.error);
