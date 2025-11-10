@@ -3,7 +3,7 @@
 // SOURCE_FOR: DEPLOY
 
 import { callWithFallback } from './utils/fallback.js';
-import { getLogger } from './utils/logger.js';
+import { Logger } from './utils/logger.js';
 import { getConfig } from './utils/config.js';
 
 // مقدارهای پیش‌فرض برای تست
@@ -21,7 +21,7 @@ async function getHistoricalPrices(coinId, daysAgo, env) {
 }
 
 export async function detectMarketRegime({ cfg, env }) {
-    getLogger.log('INFO', 'Detecting market regime...');
+    Logger.log('INFO', 'Detecting market regime...');
     const config = cfg || await getConfig(env);
     
     try {
@@ -84,11 +84,11 @@ export async function detectMarketRegime({ cfg, env }) {
             timestamp: new Date().toISOString()
         };
         
-        getLogger.log('INFO', `Market regime detected: ${regimeInfo.regime}`, regimeInfo);
+        Logger.log('INFO', `Market regime detected: ${regimeInfo.regime}`, regimeInfo);
         return regimeInfo;
         
     } catch (e) {
-        getLogger.log('ERROR', 'Error detecting market regime', e);
+        Logger.log('ERROR', 'Error detecting market regime', e);
         // در صورت خطا، حالت پیش‌فرض بازگردانده می‌شود
         return {
             regime: 'NEUTRAL',
