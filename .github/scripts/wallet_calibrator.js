@@ -1,4 +1,4 @@
-// github/scripts/wallet_calibrator.js
+// .github/scripts/wallet_calibrator.js
 // این اسکریپت باید در محیط Node.js اجرا شود (مثلاً در GitHub Actions)
 
 require('dotenv').config();
@@ -82,5 +82,6 @@ async function main() {
 
     console.log('Calibration finished.');
 }
+
 
 main().catch(console.error);
