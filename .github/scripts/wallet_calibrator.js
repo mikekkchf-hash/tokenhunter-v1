@@ -1,4 +1,4 @@
-// github/scripts/wallet_calibrator.js
+// .github/scripts/wallet_calibrator.js
 // SOURCE_FOR: ANALYZER
 // SOURCE_FOR: DEPLOY
 
@@ -361,3 +361,4 @@ if (require.main === module) {
 }
 
 module.exports = { runCalibrator }; // برای تست یا فراخوانی در جاهای دیگر
+
