@@ -4,7 +4,7 @@
   "description": "A resilient and regime-aware token hunter bot",
   "main": "index.js",
   "scripts": {
-    "calibrate": "node github/scripts/wallet_calibrator.js"
+    "calibrate": "node .github/scripts/wallet_calibrator.js"
   },
   "dependencies": {
     "node-fetch": "^2.6.7",
