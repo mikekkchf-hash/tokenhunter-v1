@@ -1,16 +1,17 @@
 {
   "name": "tokenhunter",
   "version": "1.0.0",
-  "description": "",
+  "description": "A resilient and regime-aware token hunter bot",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "calibrate": "node github/scripts/wallet_calibrator.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "nock": "^13.3.0"
   }
 }
