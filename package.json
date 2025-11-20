@@ -1,17 +1,11 @@
 {
-  "name": "tokenhunter",
-  "version": "1.0.0",
-  "description": "A resilient and regime-aware token hunter bot",
-  "main": "index.js",
+  "name": "dragon-bot",
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "calibrate": "node .github/scripts/wallet_calibrator.js"
+    "test": "node ./tests/unit/market.test.js"
   },
   "dependencies": {
-    "node-fetch": "^2.6.7",
-    "dotenv": "^16.0.3"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0",
-    "nock": "^13.3.0"
+    "node-fetch": "^2.7.0"
   }
 }

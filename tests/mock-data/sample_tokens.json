@@ -1,0 +1,4 @@
+[
+  {"token":"0x1111111111111111111111111111111111111111","detectedAt":"2025-11-01T00:00:00Z","metrics":{"smartBuys":3,"securityScore":0.7,"liquidityUSD":45000}},
+  {"token":"0x2222222222222222222222222222222222222222","detectedAt":"2025-11-05T12:00:00Z","metrics":{"smartBuys":0,"securityScore":0.2,"liquidityUSD":1000}}
+]

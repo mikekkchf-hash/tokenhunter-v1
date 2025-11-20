@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MarketAnalysis",
+  "type": "object",
+  "required": ["symbol", "regime", "metrics", "computedAt"],
+  "properties": {
+    "symbol": { "type": "string" },
+    "regime": { "type": "string", "enum": ["bull", "bear", "volatile", "chop", "bull-weak", "bear-weak", "unknown"] },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "lastPrice": { "type": "number" },
+        "estLiquidity": { "type": "number" },
+        "volStd": { "type": "number" },
+        "latestRsi": { "type": "number" },
+        "latestEmaShort": { "type": "number" },
+        "latestEmaLong": { "type": "number" },
+        "confidence": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "advice": { "type": "string" },
+    "indicatorsSummary": { "type": "object" },
+    "computedAt": { "type": "string", "format": "date-time" }
+  }
+}

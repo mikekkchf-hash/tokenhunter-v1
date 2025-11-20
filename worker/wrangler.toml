@@ -1,0 +1,29 @@
+name = "tokenhunter-worker"
+main = "index.js"
+compatibility_date = "2025-11-01"
+account_id = "778a58e60850bf1bea121c6d61e82a8c"
+workers_dev = true
+
+[vars]
+WORKER_BASE_URL = "https://token-hunter-worker.mikekkchf.workers.dev"
+MIN_LIQUIDITY_USD = "30000"
+ALERT_THRESHOLD = "80"
+REQUIRED_WALLETS = "3"
+WINDOW_MINUTES = "10"
+
+[durable_objects]
+[[durable_objects.bindings]]
+name = "DURABLE_RECENT"
+class_name = "RecentTxStore"
+
+[[kv_namespaces]]
+binding = "KV_CANDIDATES"
+id = "fc5ff0b70b664fbe93277e8535824633"
+
+[[kv_namespaces]]
+binding = "KV_CONFIG"
+id = "f144f352c70849c0a636d756b83cb0eb"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RecentTxStore"]

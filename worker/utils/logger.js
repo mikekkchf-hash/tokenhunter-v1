@@ -1,33 +1,15 @@
 // worker/utils/logger.js
-// PATCHED FOR REGIME - DO NOT REMOVE - integrated by Qwen
-// PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
-
-export class Logger {
-    constructor(env) {
-        this.env = env;
-    }
-
-    async log(level, message, data = {}) {
-        const timestamp = new Date().toISOString();
-        const logEntry = {
-            timestamp,
-            level,
-            message,
-            data
-        };
-
-        console.log(`[${level}] ${message}`, data);
-
-        // ذخیره در KV برای مانیتورینگ (اختیاری)
-        // const key = `log_${timestamp}`;
-        // await this.env.MY_KV.put(key, JSON.stringify(logEntry), { expirationTtl: 60 * 60 * 24 * 7 }); // 1 week
-    }
+// ساده، structured logging که در Cloudflare Console خوانا باشد.
+// level: debug|info|warn|error
+export function logger(level='info', message='', meta = {}) {
+  try {
+    const out = { ts: new Date().toISOString(), level, message, ...meta };
+    // Cloudflare logs show console.log; keep structured
+    if (level === 'error') console.error(JSON.stringify(out));
+    else if (level === 'warn') console.warn(JSON.stringify(out));
+    else console.log(JSON.stringify(out));
+  } catch (e) {
+    // swallow
+    console.log('logger fail', e);
+  }
 }
-
-// export یک نمونه از کلاس برای استفاده آسان در سایر فایل‌ها
-// توجه: این فقط کار می‌کند اگر env در همه جا در دسترس باشد.
-// روش استاندارد‌تر این است که هر فایل نمونه خود را بسازد.
-// اما برای سادگی، می‌توانیم یک تابع export کنیم که نمونه بسازد.
-
-export const getLogger = (env) => new Logger(env);
-

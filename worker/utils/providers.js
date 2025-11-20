@@ -1,95 +1,45 @@
 // worker/utils/providers.js
-// SOURCE_FOR: FALLBACK
-// SOURCE_FOR: DEPLOY
+// SOURCE_FOR: FALLBACK, DEPLOY
+// تعریف تمام APIهای مورد نیاز با جزئیات Rate Limit و نوع اتصال.
 
 export const PROVIDERS = {
-    price: [
-        {
-            name: 'CoinGecko',
-            url: 'https://api.coingecko.com/api/v3',
-            ratePerSec: 0.5, // ~30/min
-            params: { no_key: true }
-        },
-        {
-            name: 'CoinPaprika',
-            url: 'https://api.coinpaprika.com/v1',
-            ratePerSec: 1,
-            params: { no_key: true }
-        },
-        {
-            name: 'CoinCap',
-            url: 'https://api.coincap.io/v2',
-            ratePerSec: 1,
-            params: { no_key: true }
-        }
-    ],
-    tx: {
-        ethereum: [
-            {
-                name: 'Etherscan',
-                url: 'https://api.etherscan.io/api',
-                ratePerSec: 5,
-                params: { key_env: 'ETHERSCAN_API_KEY' }
-            },
-            {
-                name: 'Covalent',
-                url: 'https://api.covalenthq.com/v1',
-                ratePerSec: 2,
-                params: { key_env: 'COVALENT_KEY' }
-            },
-            {
-                name: 'Moralis',
-                url: 'https://deep-index.moralis.io/api/v2',
-                ratePerSec: 1,
-                params: { key_env: 'MORALIS_KEY' }
-            }
-        ],
-        bsc: [
-            {
-                name: 'BscScan',
-                url: 'https://api.bscscan.com/api',
-                ratePerSec: 5,
-                params: { key_env: 'BSCSCAN_API_KEY' }
-            },
-            {
-                name: 'Covalent',
-                url: 'https://api.covalenthq.com/v1',
-                ratePerSec: 2,
-                params: { key_env: 'COVALENT_KEY' }
-            }
-        ],
-        solana: [
-            {
-                name: 'Helius',
-                url: 'https://api.helius.xyz',
-                ratePerSec: 10,
-                params: { key_env: 'HELIUS_KEY' }
-            }
-        ]
+    // 1. ELITE DATA / ANALYTICS (جایگزین Dune)
+    // استفاده از آدرس Hosted Service عمومی The Graph
+    THE_GRAPH: {
+        name: 'The Graph Hosted Service',
+        type: 'GRAPHQL', // برای کوئری Subgraphs عمومی
+        baseUrl: 'https://api.thegraph.com/subgraphs/name/', 
+        rateLimit: 500, // Query/minute (حدس محافظه‌کارانه - بسیار بالاتر از Dune)
+        timeUnit: 60,
+        // هیچ Fallback مستقیمی برای Dune نداریم، چون دیتای آن منحصر به فرد است.
     },
-    poolReserves: [
-        {
-            name: 'TheGraph-UniswapV2',
-            url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
-            ratePerSec: 10,
-            params: { no_key: true }
-        },
-        {
-            name: 'Covalent-Pools',
-            url: 'https://api.covalenthq.com/v1/1/pools/',
-            ratePerSec: 2,
-            params: { key_env: 'COVALENT_KEY' }
-        }
-    ],
-    sentiment: [
-        {
-            name: 'CoinGecko-Social',
-            url: 'https://api.coingecko.com/api/v3',
-            ratePerSec: 0.2, // 12/min
-            params: { no_key: true }
-        }
-    ]
-};
+    ZAPPER: {
+        name: 'Zapper GraphQL',
+        type: 'GRAPHQL', // برای PNL و Wallet Scoring
+        baseUrl: 'https://api.zapper.xyz/v2/graphql',
+        rateLimit: 30000, // 1M requests/month ~ 30k/day (خیلی سخاوتمندانه)
+        timeUnit: 86400, // 24 ساعت
+        fallback: ['MORALIS'], // Moralis می‌تواند PNL ساده را محاسبه کند
+    },
 
-export const HEALTH_KEY_PREFIX = 'provider_health_';
-export const HEALTH_COOLDOWN_MS = 300000; // 5 minutes
+    // 2. REAL-TIME TX STREAM (برای Incremental Monitor در Cloudflare Worker)
+    POCKET_NETWORK_ETH: {
+        name: 'Pocket Network ETH',
+        type: 'WEBSOCKET_RPC', // برای اتصال Low-Latency
+        baseUrl: 'wss://eth-mainnet.gateway.pokt.network/v1/lb/', // نیاز به Key در URL
+        rateLimit: 30, // Session/second (بسیار بالا)
+        timeUnit: 1,
+        fallback: ['MORALIS_WS'], // Fallback به Websocket دیگری
+    },
+
+    // 3. FALLBACKS (برای شرایط اضطراری)
+    MORALIS: {
+        name: 'Moralis REST (Fallback)',
+        type: 'REST',
+        baseUrl: 'https://deep-index.moralis.io/api/v2',
+        rateLimit: 15, // Low Limit
+        timeUnit: 1,
+        fallback: [],
+    },
+    // ... سایر Fallback ها مثل CoinGecko برای قیمت (در صورت لزوم)
+};

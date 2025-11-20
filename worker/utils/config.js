@@ -1,73 +1,43 @@
-// worker/utils/config.js (پَچ شده)
-// PATCHED FOR REGIME - DO NOT REMOVE - integrated by Qwen
-// PATCHED FOR RESILIENCE - DO NOT REMOVE - integrated by Qwen
-// SOURCE_FOR: DEPLOY
+// worker/utils/config.js
+// SOURCE_FOR: REGIME, SCORING, SAFE_MODE
 
-export async function getConfig(env) {
-    const configStr = await env.MY_KV.get('SYSTEM_CONFIG');
-    if (!configStr) {
-        // مقادیر پیش‌فرض
-        return {
-            min_liquidity_usd: 10000,
-            min_consensus_wallets: 2,
-            min_smart_score: 70,
-            min_security_score: 7,
-            max_alerts_per_hour: 5,
-            // تنظیمات جدید برای Resilience
-            fallback: {
-                provider_cooldown_ms: 300000, // 5 min
-                safe_mode_failure_threshold: 5, // بعد از 5 شکست متوالی
-                safe_mode_duration_hours: 24,
-            },
-            alert: {
-                max_per_day: 5,
-                max_per_hour: 2,
-                cooldown_sec: 1800, // 30 min
-                // زنجیره فعالیت اضطراری
-                fallback_chain: ['telegram', 'discord', 'github_issue'],
-            },
-            chains: ["ethereum", "bsc"],
-            tokens_list: ["PEPE", "SHIB"],
-            // تنظیمات regime
-            regime: {
-                bull_threshold: 0.05, // 5% 7-day gain on BTC
-                bear_threshold: -0.05, // -5% 7-day loss on BTC
-                hysteresis_days: 1,
-                multipliers: {
-                    BULL: { risk: 1.2, opportunity: 0.8 },
-                    BEAR: { risk: 0.7, opportunity: 1.5 },
-                    NEUTRAL: { risk: 1.0, opportunity: 1.0 },
-                }
-            },
-            // تنظیمات scoring regime-aware
-            scoring: {
-                weights: {
-                    liquidity: 0.25,
-                    consensus: 0.25,
-                    security: 0.20,
-                    holderChange: 0.15,
-                    social: 0.10,
-                    misc: 0.05
-                },
-                min_liquidity_usd: 10000,
-                max_liquidity_usd: 1000000,
-                min_consensus: 2,
-                max_consensus: 10,
-                max_holder_change: 50,
-                max_social_volume: 1000
-            },
-            // تنظیمات monitor
-            monitor: {
-                poll_interval_min: 15,
-                cooldown_sec: 1800,
-                max_new_txs_per_poll: 50
-            },
-            // تنظیمات safe mode
-            safe_mode: {
-                risk_multiplier: 0.5,
-                opportunity_multiplier: 2.0
-            }
-        };
-    }
-    return JSON.parse(configStr);
-}
+// 1. آستانه‌های تشخیص رژیم بازار (Market Regime Detection)
+export const REGIME_THRESHOLDS = {
+    // تغییر 7 روزه BTC برای ورود به رژیم صعودی (Bull)
+    BULL_ENTER_PCT: 5.0,  // +5%
+    // تغییر 7 روزه BTC برای ورود به رژیم نزولی (Bear)
+    BEAR_ENTER_PCT: -3.0, // -3%
+    // تعداد روزهای متوالی که باید یک رژیم برای فعال‌سازی کامل حفظ شود (Hysteresis)
+    HYSTERESIS_DAYS: 3,
+    // آستانه کل Market Cap برای فعال‌سازی رژیم ILLIQUID (مثلاً زیر $100B)
+    ILLIQUID_THRESHOLD_MCAP: 100_000_000_000, 
+};
+
+// 2. ضرایب امتیازدهی بر اساس رژیم بازار (Scoring Multipliers)
+// این ضرایب، Final Score را در worker/scoring_regime_aware.js تنظیم می‌کنند
+export const SCORING_MULTIPLIERS = {
+    BULL: 1.2,       // در بازار صعودی، سخت‌گیری بیشتر (فقط سیگنال‌های قوی‌تر)
+    NEUTRAL: 1.0,    // استاندارد
+    BEAR: 0.8,       // در بازار نزولی، انعطاف‌پذیری بیشتر (چون سیگنال خوب کمیاب است)
+    ILLIQUID: 0.5,   // در رکود، امتیازدهی بسیار سختگیرانه
+};
+
+// 3. آستانه‌های حالت ایمن (Safe Mode Thresholds)
+export const SAFE_MODE_THRESHOLDS = {
+    // اگر BTC در 7 روز بیشتر از این درصد سقوط کند، SAFE_MODE فعال می‌شود
+    BTC_CRASH_7D: -10.0, // -10%
+    // اگر نرخ شکست API از این آستانه بالاتر رود، SAFE_MODE فعال می‌شود
+    API_FAILURE_PCT: 0.15, // 15% شکست
+};
+
+// 4. تنظیمات هشدار (Alert Configuration)
+export const ALERT_CONFIG = {
+    MIN_SCORE: 7.0,          // حداقل امتیاز نهایی برای ارسال هشدار
+    MAX_ALERTS_HOURLY: 30,   // حداکثر تعداد هشدار در ساعت
+    TELEGRAM_CHAT_ID: '-5057136360',    // آیدی چت تلگرام (باید در Secret ست شود)
+};
+
+// 5. تنظیمات API Fallback
+export const API_CONFIG = {
+    FALLBACK_COOLDOWN_SEC: 60 * 60, // 1 ساعت بلاک برای یک Provider شکست‌خورده
+};

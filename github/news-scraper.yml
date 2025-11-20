@@ -1,0 +1,40 @@
+name: News Scraper -> Worker
+on:
+  schedule:
+    - cron: '*/15 * * * *' # هر 15 دقیقه
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install
+        run: npm ci
+        working-directory: github
+
+      - name: Run news scraper
+        env:
+          NEWS_RSS_LIST: ${{ secrets.NEWS_RSS_LIST }} # comma-separated list of RSS URLs
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
+          WORKER_BASE_URL: ${{ secrets.WORKER_BASE_URL }}
+        run: |
+          node scripts/news_scraper.js
+        working-directory: github
+
+      - name: Upload news logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: news-logs
+          path: github/logs || github/**/logs
